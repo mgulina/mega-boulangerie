@@ -2,8 +2,11 @@
 const mainButton = document.getElementById("cookieclick");
 
 let cookies = 0;
-let cookiesLegacy = 0;
 const counter = document.getElementById("counter");
+
+let cookiesLegacy = 0;
+const counterLegacy = document.getElementById("counterLegacy");
+
 
 let cookiesPerClick = 1;
 const counterPerClick = document.getElementById("counterPerClick");
@@ -14,7 +17,11 @@ if (cookies == 0) bakerTitle.textContent = "apprentice baker";
 // Améliorations
 let upgradesList = [
 	{ name: "Electric Oven", factor: 1, price: 20 },
-	{ name: "Fancy Grandma", factor: 2, price: 50 }
+	{ name: "Fancy Grandma", factor: 2, price: 50 },
+	{ name: "Farm", factor: 4, price: 150 },
+	{ name: "Mine", factor: 8, price: 400 },
+	{ name: "Factory", factor: 16, price: 1000 },
+	{ name: "Bank", factor: 32, price: 2500 },
 	];
 
 	let upgradeBlock = document.getElementById("upgradeBlock");
@@ -46,16 +53,19 @@ mainButton.addEventListener("click", function() {
 
 	// Mise à jour des compteurs
 	counter.textContent = cookies;
+	counterLegacy.textContent = cookiesLegacy;
 	counterPerClick.textContent = cookiesPerClick;
 
 	// Rang du boulanger
-	if (cookiesLegacy >= 10) {
-		bakerTitle.textContent = "junior baker";
-	}
-	if (cookiesLegacy >= 50) {
-		bakerTitle.textContent = "baker";
-	}
 	if (cookiesLegacy >= 100) {
 		bakerTitle.textContent = "master baker";
 	}
+	else if (cookiesLegacy >= 50) {
+		bakerTitle.textContent = "baker";
+	}
+	else if (cookiesLegacy >= 10) {
+		bakerTitle.textContent = "junior baker";
+	}
+	
+	
 	});
