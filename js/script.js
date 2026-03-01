@@ -14,6 +14,8 @@ const counterPerClick = document.getElementById("counterPerClick");
 let bakerTitle = document.getElementById("bakerTitle");
 if (cookies == 0) bakerTitle.textContent = "apprentice baker";
 
+let buyFactor = 1;
+
 // Liste des batiments
 let buildingList = [
 	{ name: "Electric Oven", cpc: 1, price: 10*2, quantity: 0 },
@@ -39,30 +41,61 @@ let buildingList = [
 	];
 
 	let buildingBlock = document.getElementById("buildingBlock");
+	const br = document.createElement("br");
 	for (let building of buildingList) {
 		let li = document.createElement("li");
 		let buildingButton = document.createElement("button");
+		buildingButton.id = building.name.replace(/\s/g, "") + "Button"; // Remove spaces for ID
 		buildingButton.textContent = building.name + " (+" + building.cpc + " cpc),	cost: " + building.price + " cookies" + " (owned: " + building.quantity + ")";
 		buildingButton.addEventListener("click", function() {
 			buyBuilding(building);
 		});
 		li.appendChild(buildingButton);
 		buildingBlock.appendChild(li);
+		buildingBlock.appendChild(br.cloneNode());
 		}
 
-	function buyBuilding(building) {
-		if (cookies >= building.price) {
-			cookies = cookies - building.price;
-			cookiesPerClick = cookiesPerClick + building.cpc;	
-			counter.textContent = cookies;
-			counterPerClick.textContent = cookiesPerClick;
-			building.quantity++;
+	// Mise à jour des compteurs et des boutons de bâtiments
+	function updateBuildingButtons() {
+		counter.textContent = cookies;
+		counterPerClick.textContent = cookiesPerClick;
 
-			// Mise à jour du nombre d'améliorations achetées
-			let buildingButtons = buildingBlock.getElementsByTagName("button");
-			for (let i = 0; i < buildingList.length; i++) {
-				buildingButtons[i].textContent = buildingList[i].name + " (+" + buildingList[i].cpc + " cpc),	cost: " + buildingList[i].price + " cookies" + " (owned: " + buildingList[i].quantity + ")";
-			}
+		let buildingButtons = buildingBlock.getElementsByTagName("button");	
+		for (let i = 0; i < buildingList.length; i++) {
+			buildingButtons[i].textContent = buildingList[i].name + " (+" + buildingList[i].cpc + " cpc),	cost: " + buildingPrice(buildingList[i]) + " cookies" + " (owned: " + buildingList[i].quantity + ")";
+		}
+	}
+
+	function buildingPrice(building) {
+		let price = 0;
+		for (let i = 0; i < buyFactor; i++) {
+			price += Math.round(building.price * (1.15 ** i));
+		}
+		return price;
+	}
+
+	/* function numberMaxBuy(building) {
+		let quantity = 0;
+		let price = building.price;
+		while (price <= cookies) {
+			quantity++;
+			price = price + Math.round(building.price * 1.15);
+		}
+		return quantity;
+	} */
+
+	function buyBuilding(building) {
+
+		let price = buildingPrice(building);
+		if (cookies >= price ) {
+			cookies = cookies - price;
+			cookiesPerClick = cookiesPerClick + buyFactor * building.cpc;	
+
+			building.quantity += buyFactor;
+
+			building.price = Math.round(building.price * 1.15**buyFactor);
+
+			updateBuildingButtons();
 		}
 	}
 
@@ -87,4 +120,22 @@ mainButton.addEventListener("click", function() {
 	else if (cookiesLegacy >= 10) {
 		bakerTitle.textContent = "junior baker";
 	}	
+	});
+
+	// Listener du bouton de facteur d'achat
+	const buyFactorButton = document.getElementById("buyFactorButton");
+	buyFactorButton.addEventListener("click", function() {		
+		if (buyFactor == 1) {
+			buyFactor = 10;
+			buyFactorButton.textContent = "Buy x10";	
+		}
+		else if (buyFactor == 10) {
+			buyFactor = 100;
+			buyFactorButton.textContent = "Buy x100";	
+		}	
+		else if (buyFactor == 100) {
+			buyFactor = 1;
+			buyFactorButton.textContent = "Buy x1";	
+		}
+		updateBuildingButtons();
 	});
