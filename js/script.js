@@ -15,6 +15,71 @@ let bakerTitle = document.getElementById("bakerTitle");
 if (cookies == 0) bakerTitle.textContent = "apprentice baker";
 
 let buyFactor = 1;
+let increaseFactor = 1.15;
+
+// Formatage des nombres affichés
+	function formatNum(num) {
+		if (num > 10 ** 60) {
+			return (num / 10 ** 60).toFixed(0) + "  NoD";
+		}
+		else if (num > 10 ** 57) {
+			return (num / 10 ** 57).toFixed(0) + "  OcD";
+		}
+		else if (num > 10 ** 54) {
+			return (num / 10 ** 54).toFixed(0) + "  SpD";
+		}
+		else if (num > 10 ** 51) {
+			return (num / 10 ** 51).toFixed(0) + "  SxD";
+		}
+		else if (num > 10 ** 48) {
+			return (num / 10 ** 48).toFixed(0) + "  QiD";
+		}
+		else if (num > 10 ** 45) {
+			return (num / 10 ** 45).toFixed(0) + "  QaD";
+		}
+		else if (num > 10 ** 42) {
+			return (num / 10 ** 42).toFixed(0) + " TrD";
+		}
+		else if (num > 10 ** 39) {
+			return (num / 10 ** 39).toFixed(0) + "  DoD";
+		}
+		else if (num > 10 ** 36) {
+			return (num / 10 ** 36).toFixed(0) + "  UnD";
+		}
+		else if (num > 10 ** 33) {
+			return (num / 10 ** 33).toFixed(0) + "  Dc";
+		}
+		else if (num > 10 ** 30) {
+			return (num / 10 ** 30).toFixed(0) + "  No";
+		}
+		else if (num > 10 ** 27) {
+			return (num / 10 ** 27).toFixed(0) + "  Oc";
+		}
+		else if (num > 10 ** 24) {
+			return (num / 10 ** 24).toFixed(0) + "  Sp";
+		}
+		else if (num > 10 ** 21) {
+			return (num / 10 ** 21).toFixed(0) + "  Sx";
+		}
+		else if (num > 10 ** 18) {
+			return (num / 10 ** 18).toFixed(0) + "  Qi";
+		}
+		else if (num > 10 ** 15) {
+			return (num / 10 ** 15).toFixed(0) + "  Qa";
+		}
+		else if (num > 10 ** 12) {
+			return (num / 10 ** 12).toFixed(0) + "  T";
+		}
+		else if (num > 10 ** 9) {
+			return (num / 10 ** 9).toFixed(0) + " B";
+		}
+		else if (num > 10 ** 6) {
+			return (num / 10 ** 6).toFixed(0) + " M";
+		}
+		else {
+			return num;
+		}
+	}
 
 // Liste des batiments
 let buildingList = [
@@ -46,7 +111,7 @@ let buildingList = [
 		let li = document.createElement("li");
 		let buildingButton = document.createElement("button");
 		buildingButton.id = building.name.replace(/\s/g, "") + "Button"; // Remove spaces for ID
-		buildingButton.textContent = building.name + " (+" + building.cpc + " cpc),	cost: " + building.price + " cookies" + " (owned: " + building.quantity + ")";
+		buildingButton.textContent = building.name + " (+" + building.cpc + " cpc),	cost: " + formatNum(building.price) + " cookies" + " (owned: " + building.quantity + ")";
 		buildingButton.addEventListener("click", function() {
 			buyBuilding(building);
 		});
@@ -55,49 +120,58 @@ let buildingList = [
 		buildingBlock.appendChild(br.cloneNode());
 		}
 
-	// Mise à jour des compteurs et des boutons de bâtiments
-	function updateBuildingButtons() {
-		counter.textContent = cookies;
-		counterPerClick.textContent = cookiesPerClick;
+	
 
-		let buildingButtons = buildingBlock.getElementsByTagName("button");	
-		for (let i = 0; i < buildingList.length; i++) {
-			buildingButtons[i].textContent = buildingList[i].name + " (+" + buildingList[i].cpc + " cpc),	cost: " + buildingPrice(buildingList[i]) + " cookies" + " (owned: " + buildingList[i].quantity + ")";
-		}
+// Mise à jour des compteurs 
+function updateCounters() {	
+	counterPerClick.textContent = formatNum(cookiesPerClick);
+	counter.textContent = formatNum(cookies);
+	counterLegacy.textContent = formatNum(cookiesLegacy);
+}
+
+// Mise à jour des boutons de bâtiments
+function updateBuildingButtons() {
+	let buildingButtons = buildingBlock.getElementsByTagName("button");	
+	for (let i = 0; i < buildingList.length; i++) {
+		buildingButtons[i].textContent = buildingList[i].name + " (+" + buildingList[i].cpc + " cpc),	cost: " + formatNum(buildingPrice(buildingList[i])) + " cookies" + " (owned: " + buildingList[i].quantity + ")";
 	}
+}
 
-	function buildingPrice(building) {
-		let price = 0;
-		for (let i = 0; i < buyFactor; i++) {
-			price += Math.round(building.price * (1.15 ** i));
-		}
-		return price;
+// Calcul du prix d'achat en fonction du facteur d'achat
+function buildingPrice(building) {
+	let price = 0;
+	for (let i = 0; i < buyFactor; i++) {
+		price += Math.round(building.price * (increaseFactor ** i));
 	}
+	return price;
+}
 
-	/* function numberMaxBuy(building) {
-		let quantity = 0;
-		let price = building.price;
-		while (price <= cookies) {
-			quantity++;
-			price = price + Math.round(building.price * 1.15);
-		}
-		return quantity;
-	} */
-
-	function buyBuilding(building) {
-
-		let price = buildingPrice(building);
-		if (cookies >= price ) {
-			cookies = cookies - price;
-			cookiesPerClick = cookiesPerClick + buyFactor * building.cpc;	
-
-			building.quantity += buyFactor;
-
-			building.price = Math.round(building.price * 1.15**buyFactor);
-
-			updateBuildingButtons();
-		}
+/* function numberMaxBuy(building) {
+	let quantity = 0;
+	let price = building.price;
+	while (price <= cookies) {
+		quantity++;
+		price = price + Math.round(building.price * increaseFactor**quantity);
 	}
+	return quantity;
+} */
+
+function buyBuilding(building) {
+
+	let price = buildingPrice(building);
+	if (cookies >= price ) {
+		cookies = cookies - price;
+		cookiesPerClick = cookiesPerClick + buyFactor * building.cpc;	
+
+		building.quantity += buyFactor;
+
+		building.price = Math.round(building.price * increaseFactor**buyFactor);
+
+		updateCounters();
+		updateBuildingButtons();
+		//tick();
+	}
+}
 
 // Listener du bouton principal
 mainButton.addEventListener("click", function() {
@@ -105,10 +179,7 @@ mainButton.addEventListener("click", function() {
 	cookies = cookies + cookiesPerClick;
 	cookiesLegacy = cookiesLegacy + cookiesPerClick;
 
-	// Mise à jour des compteurs
-	counter.textContent = cookies;
-	counterLegacy.textContent = cookiesLegacy;
-	counterPerClick.textContent = cookiesPerClick;
+	updateCounters();
 
 	// Rang du boulanger
 	if (cookiesLegacy >= 100) {
@@ -120,22 +191,42 @@ mainButton.addEventListener("click", function() {
 	else if (cookiesLegacy >= 10) {
 		bakerTitle.textContent = "junior baker";
 	}	
+});
+
+// Listener du bouton de facteur d'achat
+const buyFactorButton = document.getElementById("buyFactorButton");
+buyFactorButton.addEventListener("click", function() {		
+	if (buyFactor == 1) {
+		buyFactor = 10;
+	}
+	else if (buyFactor == 10) {
+		buyFactor = 100;
+	}	
+	else if (buyFactor == 100) {
+		buyFactor = 1;
+	}
+	buyFactorButton.textContent = "Buy x" + buyFactor;
+	updateBuildingButtons();
+});
+
+function tick() {
+	// Création d'un événement personnalisé
+	const tick = new Event("tick");
+
+	// Écouteur pour réagir à l'événement
+	document.addEventListener("tick", () => {
+		for (let i = 0; i < buildingList[buildingList.length].quantity; i++) {
+		mainButton.click(); //
+		}
 	});
 
-	// Listener du bouton de facteur d'achat
-	const buyFactorButton = document.getElementById("buyFactorButton");
-	buyFactorButton.addEventListener("click", function() {		
-		if (buyFactor == 1) {
-			buyFactor = 10;
-			buyFactorButton.textContent = "Buy x10";	
-		}
-		else if (buyFactor == 10) {
-			buyFactor = 100;
-			buyFactorButton.textContent = "Buy x100";	
-		}	
-		else if (buyFactor == 100) {
-			buyFactor = 1;
-			buyFactorButton.textContent = "Buy x1";	
-		}
-		updateBuildingButtons();
-	});
+	let intervalId;
+	if (buildingList[1].quantity > 0) {
+		intervalId = setInterval(() => {
+			document.dispatchEvent(tick);
+		}, 1000);
+	}
+	else if (buildingList[1].quantity == 0) {
+		clearInterval(intervalId);
+	}
+}
