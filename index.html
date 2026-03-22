@@ -9,27 +9,37 @@ sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="a
 <title>Mega boulangerie</title>
 </head>
 <body>
-	<br>
-	<div class="centered">
+	<div class="title">
 		<h1>Welcome, <span id="bakerTitle"></span>.</h1>
-
-		<div>
+	</div>
+	<div style="display: inline-block;padding: 5px;">
+	</div>
+	<div class="box">
+		<h2>Mega Bakery</h2>
+		<br>
+		<div align="center" style="padding-left: 50px; padding-right: 50px;">
 			<button id="cookieclick" type="button"><img src="assets/img/cookie.png" alt="Make cookies" width="200px"></button>
+		</div>
+		<br>
+		<div>
 			<p>Cookies in bank: <span id="counter">0</span></p>
 			<p>Cookies per click (cpc): <span id="counterPerClick">1</span></p>
 			<p>Cookies baked: <span id="counterLegacy">0</span></p>			
 		</div>
-	</div>
-	
-	<div class="centered">
-		
-	</div>
-	
-	<div class="centered">
+	</div>	
+	<div class="box">
 		<h2>Buildings</h2>
-		<button id="buyFactorButton" type="button">Buy x1</button>
 		<br>
+		<div align="center">
+			<button id="buyFactorButton" type="button">Buy x1</button>
+		</div>
 		<div id="buildingBlock" class="upgrade-list"></div>
+	</div>
+
+	<div class="box">
+		<h2>Upgrades</h2>
+		<br>
+		<div id="upgradeBlock" class="upgrade-list"></div>
 	</div>
 
 	<script src="js/script.js"></script>
